@@ -11,7 +11,8 @@ Three types of different writing systems for Japanese yomi-gana:
 And, another file is different code structure for facilities.
 
 You can download all files using `scripts/pulldata.py`.
-Each downloaded data is converted its encoding from 'cp932' to 'utf8',
+Each downloaded file is converted its encoding from 'cp932' to 'utf8',
+normalized from half-width Katakana to full-width,
 and saved under `data` directory.
 
 -----
@@ -28,5 +29,7 @@ and saved under `data` directory.
 
 それぞれのデータは `scripts/pulldata.py` でダウンロードできます。
 ダウンロードしたデータは文字エンコーディングが cp932 から utf8 に変換され、
-`data` ディレクトリに配置されます。
+半角カタカナは全角に変換されます。
+最終的に `data` ディレクトリに配置されます。
 
+日本郵便株式会社: http://www.post.japanpost.jp

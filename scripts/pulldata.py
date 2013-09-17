@@ -11,10 +11,13 @@ import json
 import shutil
 import tempfile
 import urllib
+import unicodedata
 import zipfile
+from functools import partial
 
 ORIGINAL_ENCODING = 'cp932'  # Downloaded file encoding
 ENCODING = 'utf-8'  # Follow "Open Data Protocol"
+NORMALIZATION_FORM = 'NFKC'
 BASEDIR = os.path.join(os.path.dirname(__file__), '..')
 DATA_DIR = os.path.join(BASEDIR, 'data')
 DATA_PACKAGE = os.path.join(BASEDIR, 'datapackage.json')
@@ -117,9 +120,11 @@ class ZipDownloadUnpack(object):
         return csvname
 
     def convert(self, csvname):
+        # Convert half-width Katakana to full-width
+        normalize = partial(unicodedata.normalize, NORMALIZATION_FORM)
         with codecs.open(csvname, 'r', ORIGINAL_ENCODING) as r:
             with codecs.open(self.target, 'a', ENCODING) as w:
-                [w.write(row) for row in r]
+                [w.write(normalize(row)) for row in r]
 
 
 def main():
