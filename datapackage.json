@@ -4,13 +4,12 @@
   "description": "Japanese Zipcode CSV data from Japan Post. Original data is encoded by Shift_JIS.",
   "licenses": [
     {
-      "id": "odc-pddl",
-      "url": "http://opendatacommons.org/licenses/pddl/"
+      "type": "ODC-PDDL-1.0",
+      "url": "http://opendatacommons.org/licenses/pddl"
     }
   ],
   "keywords": ["Japan", "Zipcode"],
-  "version": "1",
-  "last_updated": "2013-05-31",
+  "version": "0.2.0",
   "sources": [
     {
       "name": "Japan Post",
@@ -19,303 +18,307 @@
   ],
   "resources": [
     {
-      "url": "http://www.post.japanpost.jp/zipcode/dl/oogaki.html",
+      "name": "ken_all_oogaki",
       "path": "data/ken_all_oogaki.csv",
+      "encoding": "UTF-8",
       "schema": {
         "fields": [
           {
-            "id": "jis_code",
+            "name": "jis_code",
             "type": "string",
-            "label": "全国地方公共団体コード(JIS X0401、X0402)"
+            "title": "全国地方公共団体コード(JIS X0401、X0402)"
           },
           {
-            "id": "old_zipcode",
+            "name": "old_zipcode",
             "type": "string",
-            "label": "(旧)郵便番号(5桁)"
+            "title": "(旧)郵便番号(5桁)"
           },
           {
-            "id": "zipcode",
+            "name": "zipcode",
             "type": "string",
-            "label": "郵便番号(7桁)"
+            "title": "郵便番号(7桁)"
           },
           {
-            "id": "prefecture_kana",
+            "name": "prefecture_kana",
             "type": "string",
-            "label": "都道府県名(半角カタカナ)"
+            "title": "都道府県名(半角カタカナ)"
           },
           {
-            "id": "city_kana",
+            "name": "city_kana",
             "type": "string",
-            "label": "市区町村名(半角カタカナ)"
+            "title": "市区町村名(半角カタカナ)"
           },
           {
-            "id": "town_kana",
+            "name": "town_kana",
             "type": "string",
-            "label": "町域名(半角カタカナ)"
+            "title": "町域名(半角カタカナ)"
           },
           {
-            "id": "prefecture",
+            "name": "prefecture",
             "type": "string",
-            "label": "都道府県名"
+            "title": "都道府県名"
           },
           {
-            "id": "city",
+            "name": "city",
             "type": "string",
-            "label": "市区町村名"
+            "title": "市区町村名"
           },
           {
-            "id": "town",
+            "name": "town",
             "type": "string",
-            "label": "町域名"
+            "title": "町域名"
           },
           {
-            "id": "multi_zipcode",
+            "name": "multi_zipcode",
             "type": "boolean",
-            "label": "一町域が二以上の郵便番号で表される場合の表示"
+            "title": "一町域が二以上の郵便番号で表される場合の表示"
           },
           {
-            "id": "koaza_split",
+            "name": "koaza_split",
             "type": "boolean",
-            "label": "小字毎に番地が起番されている町域の表示"
+            "title": "小字毎に番地が起番されている町域の表示"
           },
           {
-            "id": "choume_view",
+            "name": "choume_view",
             "type": "boolean",
-            "label": "丁目を有する町域の場合の表示"
+            "title": "丁目を有する町域の場合の表示"
           },
           {
-            "id": "multi_chouiki",
+            "name": "multi_chouiki",
             "type": "boolean",
-            "label": "一つの郵便番号で二以上の町域を表す場合の表示"
+            "title": "一つの郵便番号で二以上の町域を表す場合の表示"
           },
           {
-            "id": "update_reason",
+            "name": "update_reason",
             "type": "integer",
-            "label": "更新の表示"
+            "title": "更新の表示"
           },
           {
-            "id": "update_type",
+            "name": "update_type",
             "type": "integer",
-            "label": "変更理由"
+            "title": "変更理由"
           }
         ]
       }
     },
     {
-      "url": "http://www.post.japanpost.jp/zipcode/dl/kogaki.html",
+      "name": "ken_all_kogaki",
       "path": "data/ken_all_kogaki.csv",
+      "encoding": "UTF-8",
       "schema": {
         "fields": [
           {
-            "id": "jis_code",
+            "name": "jis_code",
             "type": "string",
-            "label": "全国地方公共団体コード(JIS X0401、X0402)"
+            "title": "全国地方公共団体コード(JIS X0401、X0402)"
           },
           {
-            "id": "old_zipcode",
+            "name": "old_zipcode",
             "type": "string",
-            "label": "(旧)郵便番号(5桁)"
+            "title": "(旧)郵便番号(5桁)"
           },
           {
-            "id": "zipcode",
+            "name": "zipcode",
             "type": "string",
-            "label": "郵便番号(7桁)"
+            "title": "郵便番号(7桁)"
           },
           {
-            "id": "prefecture_kana",
+            "name": "prefecture_kana",
             "type": "string",
-            "label": "都道府県名(半角カタカナ)"
+            "title": "都道府県名(半角カタカナ)"
           },
           {
-            "id": "city_kana",
+            "name": "city_kana",
             "type": "string",
-            "label": "市区町村名(半角カタカナ)"
+            "title": "市区町村名(半角カタカナ)"
           },
           {
-            "id": "town_kana",
+            "name": "town_kana",
             "type": "string",
-            "label": "町域名(半角カタカナ)"
+            "title": "町域名(半角カタカナ)"
           },
           {
-            "id": "prefecture",
+            "name": "prefecture",
             "type": "string",
-            "label": "都道府県名"
+            "title": "都道府県名"
           },
           {
-            "id": "city",
+            "name": "city",
             "type": "string",
-            "label": "市区町村名"
+            "title": "市区町村名"
           },
           {
-            "id": "town",
+            "name": "town",
             "type": "string",
-            "label": "町域名"
+            "title": "町域名"
           },
           {
-            "id": "multi_zipcode",
+            "name": "multi_zipcode",
             "type": "boolean",
-            "label": "一町域が二以上の郵便番号で表される場合の表示"
+            "title": "一町域が二以上の郵便番号で表される場合の表示"
           },
           {
-            "id": "koaza_split",
+            "name": "koaza_split",
             "type": "boolean",
-            "label": "小字毎に番地が起番されている町域の表示"
+            "title": "小字毎に番地が起番されている町域の表示"
           },
           {
-            "id": "choume_view",
+            "name": "choume_view",
             "type": "boolean",
-            "label": "丁目を有する町域の場合の表示"
+            "title": "丁目を有する町域の場合の表示"
           },
           {
-            "id": "multi_chouiki",
+            "name": "multi_chouiki",
             "type": "boolean",
-            "label": "一つの郵便番号で二以上の町域を表す場合の表示"
+            "title": "一つの郵便番号で二以上の町域を表す場合の表示"
           },
           {
-            "id": "update_reason",
+            "name": "update_reason",
             "type": "integer",
-            "label": "更新の表示"
+            "title": "更新の表示"
           },
           {
-            "id": "update_type",
+            "name": "update_type",
             "type": "integer",
-            "label": "変更理由"
+            "title": "変更理由"
           }
         ]
       }
     },
     {
-      "url": "http://www.post.japanpost.jp/zipcode/dl/readme_ro.html",
+      "name": "ken_all_roman",
       "path": "data/ken_all_roman.csv",
+      "encoding": "UTF-8",
       "schema": {
         "fields": [
           {
-            "id": "jis_code",
+            "name": "jis_code",
             "type": "string",
-            "label": "全国地方公共団体コード(JIS X0401、X0402)"
+            "title": "全国地方公共団体コード(JIS X0401、X0402)"
           },
           {
-            "id": "zipcode",
+            "name": "zipcode",
             "type": "string",
-            "label": "郵便番号(7桁)"
+            "title": "郵便番号(7桁)"
           },
           {
-            "id": "town",
+            "name": "town",
             "type": "string",
-            "label": "町域名"
+            "title": "町域名"
           },
           {
-            "id": "city",
+            "name": "city",
             "type": "string",
-            "label": "市区郡町村名"
+            "title": "市区郡町村名"
           },
           {
-            "id": "prefecture",
+            "name": "prefecture",
             "type": "string",
-            "label": "都道府県名"
+            "title": "都道府県名"
           },
           {
-            "id": "multi_zipcode",
+            "name": "multi_zipcode",
             "type": "boolean",
-            "label": "一町域が二以上の郵便番号で表される場合の表示"
+            "title": "一町域が二以上の郵便番号で表される場合の表示"
           },
           {
-            "id": "koaza_split",
+            "name": "koaza_split",
             "type": "boolean",
-            "label": "小字毎に番地が起番されている町域の表示"
+            "title": "小字毎に番地が起番されている町域の表示"
           },
           {
-            "id": "choume_view",
+            "name": "choume_view",
             "type": "boolean",
-            "label": "丁目を有する町域の場合の表示"
+            "title": "丁目を有する町域の場合の表示"
           },
           {
-            "id": "multi_chouiki",
+            "name": "multi_chouiki",
             "type": "boolean",
-            "label": "一つの郵便番号で二以上の町域を表す場合の表示"
+            "title": "一つの郵便番号で二以上の町域を表す場合の表示"
           },
           {
-            "id": "update_reason",
+            "name": "update_reason",
             "type": "integer",
-            "label": "更新の表示"
+            "title": "更新の表示"
           },
           {
-            "id": "update_type",
+            "name": "update_type",
             "type": "integer",
-            "label": "変更理由"
+            "title": "変更理由"
           }
         ]
       }
     },
     {
-      "url": "http://www.post.japanpost.jp/zipcode/dl/jigyosyo/readme.html",
+      "name": "facility",
       "path": "data/facility.csv",
+      "encoding": "UTF-8",
       "schema": {
         "fields": [
           {
-            "id": "jis_code",
+            "name": "jis_code",
             "type": "string",
-            "label": "大口事業所の所在地のＪＩＳコード"
+            "title": "大口事業所の所在地のＪＩＳコード"
           },
           {
-            "id": "kana",
+            "name": "kana",
             "type": "string",
-            "label": "大口事業所名（カナ）"
+            "title": "大口事業所名（カナ）"
           },
           {
-            "id": "name",
+            "name": "name",
             "type": "string",
-            "label": "大口事業所名（漢字）"
+            "title": "大口事業所名（漢字）"
           },
           {
-            "id": "prefecture",
+            "name": "prefecture",
             "type": "string",
-            "label": "都道府県名"
+            "title": "都道府県名"
           },
           {
-            "id": "city",
+            "name": "city",
             "type": "string",
-            "label": "市区町村名"
+            "title": "市区町村名"
           },
           {
-            "id": "town",
+            "name": "town",
             "type": "string",
-            "label": "町域名"
+            "title": "町域名"
           },
           {
-            "id": "aza",
+            "name": "aza",
             "type": "string",
-            "label": "小字名、丁目、番地等（漢字）"
+            "title": "小字名、丁目、番地等（漢字）"
           },
           {
-            "id": "zipcode",
+            "name": "zipcode",
             "type": "string",
-            "label": "大口事業所個別番号"
+            "title": "大口事業所個別番号"
           },
           {
-            "id": "old_zipcode",
+            "name": "old_zipcode",
             "type": "string",
-            "label": "旧郵便番号"
+            "title": "旧郵便番号"
           },
           {
-            "id": "post_office",
+            "name": "post_office",
             "type": "boolean",
-            "label": "取扱局（漢字）"
+            "title": "取扱局（漢字）"
           },
           {
-            "id": "kind",
+            "name": "kind",
             "type": "integer",
-            "label": "個別番号の種別の表示"
+            "title": "個別番号の種別の表示"
           },
           {
-            "id": "order",
+            "name": "order",
             "type": "integer",
-            "label": "複数番号の有無"
+            "title": "複数番号の有無"
           },
           {
-            "id": "update_code",
+            "name": "update_code",
             "type": "integer",
-            "label": "修正コード"
+            "title": "修正コード"
           }
         ]
       }
