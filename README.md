@@ -33,3 +33,14 @@ and saved under `data` directory.
 最終的に `data` ディレクトリに配置されます。
 
 日本郵便株式会社: http://www.post.japanpost.jp
+
+## LICENSE
+
+[郵便番号データの説明 - 日本郵便](http://www.post.japanpost.jp/zipcode/dl/readme.html)
+
+    郵便番号データに限っては日本郵便株式会社は著作権を主張しません。自由に配布していただいて結構です。
+
+Others:
+
+- MIT license for scripts.
+- [Open Data Commons Public Domain Dedication and License (PDDL)](https://opendatacommons.org/licenses/pddl/) for package definition.
