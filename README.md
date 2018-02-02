@@ -34,6 +34,28 @@ and saved under `data` directory.
 
 日本郵便株式会社: http://www.post.japanpost.jp
 
+## Development
+
+Setup Python development environments using `pipenv`.
+
+```bash
+$ pip3 install --user pipenv
+$ pipenv install --ignore-pipfile
+```
+Prepare `.env` file if you use VisualStudio Code.
+`.vscode/settings.json` depends on environmental variable to search Python binary.
+
+```bash
+$ echo PYTHONENV=`pipenv --venv` > .env
+```
+
+To generate CREATE statements, run `pgddl.py` in *scripts/*.
+
+```bash
+$ pipenv run scripts/pgddl.py > datapackage.sql
+```
+
+
 ## LICENSE
 
 [郵便番号データの説明 - 日本郵便](http://www.post.japanpost.jp/zipcode/dl/readme.html)
