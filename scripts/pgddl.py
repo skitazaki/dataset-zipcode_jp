@@ -40,11 +40,13 @@ TEMPLATE_SQL_CREATE = '''
 CREATE TABLE IF NOT EXISTS {{ name }} (
 {% for field in fields %}  "{{ field.name }}"{{ ' ' }}
   {%- if field.type == 'string' -%}
-    {%- if field.constraints.get('maxLength') %}
-      {%- if field.constraints.get('minLength') and field.constraints.get('minLength') == field.constraints.get('maxLength') %}
-        CHAR({{ field.constraints.get('minLength') }})
+    {%- set minLength = field.constraints.get('minLength') -%}
+    {%- set maxLength = field.constraints.get('maxLength') -%}
+    {%- if maxLength %}
+      {%- if minLength and minLength == maxLength %}
+        CHAR({{ minLength }})
       {%- else -%}
-        VARCHAR({{ field.constraints.get('maxLength') }})
+        VARCHAR({{ maxLength }})
       {% endif -%}
     {%- else -%}VARCHAR(100)
     {%- endif -%}
@@ -53,7 +55,9 @@ CREATE TABLE IF NOT EXISTS {{ name }} (
   {%- endif -%}
   {%- if field.required %} NOT NULL{% endif -%}
   {%- if loop.nextitem is defined %},{% endif -%}
-  {%- if field.descriptor.get('title') %} -- {{ field.descriptor.get('title') }} {%- endif %}
+  {%- if field.descriptor.get('title') -%}
+    {{ ' ' }} -- {{ field.descriptor.get('title') }}
+  {%- endif %}
 {% endfor -%}
 ) ;
 
