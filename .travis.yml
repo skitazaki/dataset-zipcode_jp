@@ -18,5 +18,6 @@ before_script:
 
 # command to run the dependencies
 script:
+  - "pipenv run flake8 scripts/yaml2json.py"
   - "pipenv run flake8 scripts/pgddl.py"
   - "pipenv run scripts/pgddl.py | psql -U postgres -d travis_ci_test"

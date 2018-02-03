@@ -42,19 +42,29 @@ Setup Python development environments using `pipenv`.
 $ pip3 install --user pipenv
 $ pipenv install --ignore-pipfile
 ```
-Prepare `.env` file if you use VisualStudio Code.
-`.vscode/settings.json` depends on environmental variable to search Python binary.
+
+For VisualStudio Code user, configure user settings `"python.venvPath"` to find *virtualenv* environments.
+You can get the directory where `pipenv` installs *virtualenv* environments to use *--venv* option.
 
 ```bash
-$ echo PYTHONENV=`pipenv --venv` > .env
+$ dirname `pipenv --venv`
 ```
 
-To generate CREATE statements, run `pgddl.py` in *scripts/*.
+`datapackage.yml` is a source file for manual editing, and `datapackage.json` is converted from YAML format.
+
+## How to use
+
+To convert datapackage file format from YAML to JSON, run `yaml2json.py` in *scripts/*.
+
+```bash
+$ pipenv run scripts/yaml2json.py
+```
+
+To generate CREATE statements for PostgreSQL, run `pgddl.py` in *scripts/*.
 
 ```bash
 $ pipenv run scripts/pgddl.py > datapackage.sql
 ```
-
 
 ## LICENSE
 
