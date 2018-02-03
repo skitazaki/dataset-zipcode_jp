@@ -23,6 +23,7 @@ DATAPACKAGE_SOURCE_FILE = BASEDIR.joinpath(DATAPACKAGE_SOURCE_NAME)
 
 
 def main():
+    """Driver function to dispatch the process."""
     source = yaml.load(DATAPACKAGE_SOURCE_FILE.open())
     output = DATAPACKAGE_FILE.open('w')
     json.dump(source, output, indent=2, sort_keys=True, ensure_ascii=False)
