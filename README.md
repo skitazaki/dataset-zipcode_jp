@@ -67,6 +67,12 @@ This script is written by Python 2.x.
 $ python scripts/pulldata.py
 ```
 
+To make zip package, use *zipfile* module in Python.
+
+```bash
+$ pipenv run python -m zipfile -c datapackage.zip datapackage.json data
+```
+
 To generate CREATE statements for PostgreSQL, run `pgddl.py` in *scripts/*.
 
 ```bash

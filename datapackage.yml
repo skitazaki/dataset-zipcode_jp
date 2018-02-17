@@ -3,7 +3,7 @@
 name: zipcode-jp
 title: Japanese Zipcode
 description: Japanese Zipcode CSV data from Japan Post. Original data is encoded by Shift_JIS.
-version: 0.2.0
+version: 0.3.0
 sources:
   - name: Japan Post
     web: 'http://www.post.japanpost.jp/zipcode/download.html'
