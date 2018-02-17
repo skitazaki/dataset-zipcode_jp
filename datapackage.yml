@@ -200,69 +200,43 @@ resources:
     encoding: UTF-8
     schema:
       fields:
-        - name: jis_code
-          title: 全国地方公共団体コード(JIS X0401、X0402)
-          type: string
-          constraints:
-            required: yes
-            minLength: 5
-            maxLength: 5
         - name: zipcode
-          title: 郵便番号(7桁)
+          title: 郵便番号（7桁）
           type: string
           constraints:
             required: yes
             minLength: 7
             maxLength: 7
-        - name: town
-          title: 町域名
-          type: string
-          constraints:
-            required: yes
-        - name: city
-          title: 市区郡町村名
-          type: string
-          constraints:
-            required: yes
         - name: prefecture
           title: 都道府県名
           type: string
           constraints:
             required: yes
-        - name: multi_zipcode
-          title: 一町域が二以上の郵便番号で表される場合の表示
-          type: boolean
+        - name: city
+          title: 市区町村名
+          type: string
           constraints:
             required: yes
-        - name: koaza_split
-          title: 小字毎に番地が起番されている町域の表示
-          type: boolean
+        - name: town
+          title: 町域名
+          type: string
           constraints:
             required: yes
-        - name: choume_view
-          title: 丁目を有する町域の場合の表示
-          type: boolean
+        - name: prefecture_roman
+          title: 都道府県名
+          type: string
           constraints:
             required: yes
-        - name: multi_chouiki
-          title: 一つの郵便番号で二以上の町域を表す場合の表示
-          type: boolean
+        - name: city_roman
+          title: 市区町村名
+          type: string
           constraints:
             required: yes
-        - name: update_reason
-          title: 更新の表示
-          type: integer
+        - name: town_roman
+          title: 町域名
+          type: string
           constraints:
             required: yes
-            minimum: 0
-            maximum: 1
-        - name: update_type
-          title: 変更理由
-          type: integer
-          constraints:
-            required: yes
-            minimum: 0
-            maximum: 5
   - name: facility
     path: data/facility.csv
     encoding: UTF-8
@@ -321,7 +295,7 @@ resources:
             maxLength: 5
         - name: post_office
           title: 取扱局（漢字）
-          type: boolean
+          type: string
           constraints:
             required: yes
         - name: kind
