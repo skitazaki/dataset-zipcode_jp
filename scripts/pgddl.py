@@ -42,12 +42,12 @@ CREATE TABLE IF NOT EXISTS {{ name }} (
   {%- if field.type == 'string' -%}
     {%- set minLength = field.constraints.get('minLength') -%}
     {%- set maxLength = field.constraints.get('maxLength') -%}
-    {%- if maxLength %}
-      {%- if minLength and minLength == maxLength %}
+    {%- if maxLength -%}
+      {%- if minLength and minLength == maxLength -%}
         CHAR({{ minLength }})
       {%- else -%}
         VARCHAR({{ maxLength }})
-      {% endif -%}
+      {%- endif -%}
     {%- else -%}VARCHAR(100)
     {%- endif -%}
   {%- elif field.type == 'integer' %}INTEGER
