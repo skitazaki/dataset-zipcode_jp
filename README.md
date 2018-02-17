@@ -33,3 +33,66 @@ and saved under `data` directory.
 最終的に `data` ディレクトリに配置されます。
 
 日本郵便株式会社: http://www.post.japanpost.jp
+
+## Development
+
+Setup Python development environments using `pipenv`.
+
+```bash
+$ pip3 install --user pipenv
+$ pipenv install --ignore-pipfile
+```
+
+For VisualStudio Code user, configure user settings `"python.venvPath"` to find *virtualenv* environments.
+You can get the directory where `pipenv` installs *virtualenv* environments to use *--venv* option.
+
+```bash
+$ dirname `pipenv --venv`
+```
+
+`datapackage.yml` is a source file for manual editing, and `datapackage.json` is converted from YAML format.
+
+To convert datapackage file format from YAML to JSON, run `yaml2json.py` in *scripts/*.
+
+```bash
+$ pipenv run scripts/yaml2json.py
+```
+
+## How to use
+
+To download data files, run `pulldata.py` in *scripts/*.
+This script is written by Python 2.x.
+
+```bash
+$ python scripts/pulldata.py
+```
+
+To make zip package, use *zipfile* module in Python.
+
+```bash
+$ pipenv run python -m zipfile -c datapackage.zip datapackage.json data
+```
+
+To generate CREATE statements for PostgreSQL, run `pgddl.py` in *scripts/*.
+
+```bash
+$ pipenv run scripts/pgddl.py > datapackage.sql
+```
+
+And, create tables in PostgreSQL database. This example uses *dataset*, which is created beforehand.
+Since *COPY* statements are comment out, edit SQL file to load CSV data files.
+
+```bash
+$ psql -U postgres -d dataset -f datapackage.sql
+```
+
+## LICENSE
+
+[郵便番号データの説明 - 日本郵便](http://www.post.japanpost.jp/zipcode/dl/readme.html)
+
+    郵便番号データに限っては日本郵便株式会社は著作権を主張しません。自由に配布していただいて結構です。
+
+Others:
+
+- MIT license for scripts.
+- [Open Data Commons Public Domain Dedication and License (PDDL)](https://opendatacommons.org/licenses/pddl/) for package definition.
