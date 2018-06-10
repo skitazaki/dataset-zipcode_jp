@@ -1,19 +1,21 @@
 # Japanese Zipcode
 
 There are four files from Japan Postal.
+Three types of *ken_all* files for nation wide postal codes and
+a facility file for specific companies, organizations, or locations.
 
-Three types of different writing systems for Japanese yomi-gana:
+Three types of different writing systems for Japanese yomi-gana are:
 
 * Oogaki
 * Kogaki
 * Roman
 
-And, another file is different code structure for facilities.
-
 You can download all files using `scripts/pulldata.py`.
 Each downloaded file is converted its encoding from 'cp932' to 'utf8',
 normalized from half-width Katakana to full-width,
 and saved under `data` directory.
+
+Additional Jupyter notebooks are under `notebook` directory.
 
 -----
 
@@ -27,10 +29,12 @@ and saved under `data` directory.
 
 その他に、大口事業所個別番号があります。
 
-それぞれのデータは `scripts/pulldata.py` でダウンロードできます。
+それぞれのデータは `scripts/pulldata.py` を使ってダウンロードできます。
 ダウンロードしたデータは文字エンコーディングが cp932 から utf8 に変換され、
-半角カタカナは全角に変換されます。
-最終的に `data` ディレクトリに配置されます。
+半角カタカナは全角カタカナに変換されます。
+それぞれのCSVファイルは `data` ディレクトリに配置されます。
+
+データ確認や変換に関する追加作業は `notebook` ディレクトリで管理します。
 
 日本郵便株式会社: http://www.post.japanpost.jp
 
