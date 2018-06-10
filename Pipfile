@@ -10,6 +10,7 @@ name = "pypi"
 datapackage = "*"
 pyyaml = "*"
 "jinja2" = "*"
+pandas = "*"
 
 
 [dev-packages]
