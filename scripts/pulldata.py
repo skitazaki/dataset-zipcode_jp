@@ -12,10 +12,14 @@ import os
 import json
 import shutil
 import tempfile
-import urllib
 import unicodedata
 import zipfile
 from functools import partial
+
+try:  # Python 2.x
+    from urllib import urlretrieve
+except ImportError:  # Python 3.x
+    from urllib.request import urlretrieve
 
 APPNAME = os.path.splitext(os.path.basename(__file__))[0]
 VERSION = '0.2.0'
@@ -32,7 +36,7 @@ BASEDIR = os.path.join(os.path.dirname(__file__), '..')
 DATA_DIR = os.path.join(BASEDIR, 'data')
 DATA_PACKAGE = os.path.join(BASEDIR, 'datapackage.json')
 
-REMOTE_DIR = "http://www.post.japanpost.jp/zipcode/dl"
+REMOTE_DIR = "https://www.post.japanpost.jp/zipcode/dl"
 RESOURCES = (
     {
         "name": "ken_all_oogaki",
@@ -103,7 +107,7 @@ class ZipDownloadUnpack(object):
             self.logger.debug('"%s" is already downloaded.', resource['name'])
             return
         self.logger.info('Start downloading: %s -> %s', resource['url'], path)
-        urllib.urlretrieve(resource['url'], path)
+        urlretrieve(resource['url'], path)
         self.logger.info('Successfully downloaded "{}" {:,} bytes.'.format(
             os.path.basename(path), os.path.getsize(path)))
         return resource
