@@ -395,7 +395,7 @@
               "required": true
             },
             "name": "prefecture",
-            "title": "都道府県名",
+            "title": "都道府県名（漢字）",
             "type": "string"
           },
           {
@@ -403,21 +403,15 @@
               "required": true
             },
             "name": "city",
-            "title": "市区町村名",
+            "title": "市区町村名（漢字）",
             "type": "string"
           },
           {
-            "constraints": {
-              "required": true
-            },
             "name": "town",
-            "title": "町域名",
+            "title": "町域名（漢字）",
             "type": "string"
           },
           {
-            "constraints": {
-              "required": true
-            },
             "name": "aza",
             "title": "小字名、丁目、番地等（漢字）",
             "type": "string"
@@ -486,10 +480,11 @@
   ],
   "sources": [
     {
-      "name": "Japan Post",
+      "name": "japanpost",
+      "title": "Japan Post",
       "web": "http://www.post.japanpost.jp/zipcode/download.html"
     }
   ],
   "title": "Japanese Zipcode",
-  "version": "0.3.0"
+  "version": "0.4.0"
 }

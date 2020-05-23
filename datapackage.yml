@@ -3,9 +3,10 @@
 name: zipcode-jp
 title: Japanese Zipcode
 description: Japanese Zipcode CSV data from Japan Post. Original data is encoded by Shift_JIS.
-version: 0.3.0
+version: 0.4.0
 sources:
-  - name: Japan Post
+  - name: japanpost
+    title: Japan Post
     web: 'http://www.post.japanpost.jp/zipcode/download.html'
 keywords:
   - Japan
@@ -260,25 +261,21 @@ resources:
           constraints:
             required: yes
         - name: prefecture
-          title: 都道府県名
+          title: 都道府県名（漢字）
           type: string
           constraints:
             required: yes
         - name: city
-          title: 市区町村名
+          title: 市区町村名（漢字）
           type: string
           constraints:
             required: yes
         - name: town
-          title: 町域名
+          title: 町域名（漢字）
           type: string
-          constraints:
-            required: yes
         - name: aza
           title: 小字名、丁目、番地等（漢字）
           type: string
-          constraints:
-            required: yes
         - name: zipcode
           title: 大口事業所個別番号
           type: string
