@@ -56,12 +56,6 @@ $ dirname `pipenv --venv`
 
 `datapackage.yml` is a source file for manual editing, and `datapackage.json` is converted from YAML format.
 
-To convert datapackage file format from YAML to JSON, run `yaml2json.py` in *scripts/*.
-
-```bash
-$ pipenv run scripts/yaml2json.py
-```
-
 ## How to use
 
 To download data files, run `pulldata.py` in *scripts/*.
@@ -75,19 +69,6 @@ To make zip package, use *zipfile* module in Python.
 
 ```bash
 $ pipenv run python -m zipfile -c datapackage.zip datapackage.json data
-```
-
-To generate CREATE statements for PostgreSQL, run `pgddl.py` in *scripts/*.
-
-```bash
-$ pipenv run scripts/pgddl.py > datapackage.sql
-```
-
-And, create tables in PostgreSQL database. This example uses *dataset*, which is created beforehand.
-Since *COPY* statements are comment out, edit SQL file to load CSV data files.
-
-```bash
-$ psql -U postgres -d dataset -f datapackage.sql
 ```
 
 ## LICENSE
