@@ -1,46 +1,22 @@
-# Python CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-python/ for more details
-#
-version: 2
+---
+
+version: 2.1
 jobs:
   build:
     docker:
-      - image: circleci/python:3.6.4
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/postgres:9.4
-
-    working_directory: ~/repo
+      - image: circleci/python:3.8.3
 
     steps:
       - checkout
-
-      # Download and cache dependencies
-      - restore_cache:
-          keys:
-            - cache-{{ checksum "Pipfile" }}
-            - cache-
-
       - run:
-          name: Install dependencies
+          name: Download data files
           command: |
-            pipenv lock
-            pipenv install
-
-      - save_cache:
-          key: cache-{{ checksum "Pipfile" }}
-          paths:
-            - ~/.local
-            - ~/.cache
-        
-      - run:
-          name: Run tests
-          command: |
-            pipenv run scripts/pulldata.py
-            pipenv run python -m zipfile -c datapackage.zip datapackage.json data
+            python3 scripts/pulldata.py
+            python3 -m zipfile -c datapackage.zip datapackage.json data
 
       - store_artifacts:
           path: datapackage.zip
           destination: datapackage.zip
+      - store_artifacts:
+          path: datapackage-digest.json
+          destination: datapackage-digest.json

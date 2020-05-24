@@ -1,184 +1,174 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 """Pull Zip archive, extract CSV file, and convert encoding into UTF-8.
 """
 
-import atexit
-import codecs
-import copy
+import asyncio
+import csv
+import datetime
+import hashlib
 import logging
-import os
+import logging.config
 import json
 import shutil
 import tempfile
 import unicodedata
 import zipfile
 from functools import partial
+from pathlib import Path
+from urllib.request import urlretrieve
 
-try:  # Python 2.x
-    from urllib import urlretrieve
-except ImportError:  # Python 3.x
-    from urllib.request import urlretrieve
+APPNAME = Path(__file__).stem
+VERSION = '0.3.0'
 
-APPNAME = os.path.splitext(os.path.basename(__file__))[0]
-VERSION = '0.2.0'
-
-LOG_FORMAT = '%(asctime)s|%(levelname)s|%(message)s'
-LOG_FORMAT_DEBUG = '%(asctime)s | %(name)s:%(levelname)s | ' + \
-                   '%(filename)s:%(lineno)d | %(message)s'
-LOG_DATEFMT = '%Y-%m-%d %H:%M:%S'
+LOGGING_CONFIG = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "simple": {
+            "datefmt": '%Y-%m-%d %H:%M:%S',
+            "format": '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
+        },
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "level": "DEBUG",
+            "formatter": "simple",
+            "stream": "ext://sys.stderr",
+        },
+    },
+    "loggers": {
+        "dataset": {
+            "level": "DEBUG",
+            "handlers": ["console"],
+            "propagate": False,
+        },
+        "": {
+            "level": "INFO",
+            "handlers": ["console",],
+        },
+    },
+}
 
 ORIGINAL_ENCODING = 'cp932'  # Downloaded file encoding
 ENCODING = 'utf-8'  # Follow "Open Data Protocol"
 NORMALIZATION_FORM = 'NFKC'
-BASEDIR = os.path.join(os.path.dirname(__file__), '..')
-DATA_DIR = os.path.join(BASEDIR, 'data')
-DATA_PACKAGE = os.path.join(BASEDIR, 'datapackage.json')
+DATA_PACKAGE = Path(__file__).parent.parent / 'datapackage.json'
+DATA_DIR = DATA_PACKAGE.parent / 'data'
 
 REMOTE_DIR = "https://www.post.japanpost.jp/zipcode/dl"
-RESOURCES = (
-    {
-        "name": "ken_all_oogaki",
-        "url": REMOTE_DIR + "/oogaki/zip/ken_all.zip"
-    },
-    {
-        "name": "ken_all_kogaki",
-        "url": REMOTE_DIR + "/kogaki/zip/ken_all.zip"
-    },
-    {
-        "name": "ken_all_roman",
-        "url": REMOTE_DIR + "/roman/ken_all_rome.zip"
-    },
-    {
-        "name": "facility",
-        "url": REMOTE_DIR + "/jigyosyo/zip/jigyosyo.zip"
-    }
-)
+REMOTE_URLS = {
+    "ken_all_oogaki": REMOTE_DIR + "/oogaki/zip/ken_all.zip",
+    "ken_all_kogaki": REMOTE_DIR + "/kogaki/zip/ken_all.zip",
+    "ken_all_roman": REMOTE_DIR + "/roman/ken_all_rome.zip",
+    "facility": REMOTE_DIR + "/jigyosyo/zip/jigyosyo.zip",
+}
 
 
-class Event(object):
-
-    callbacks = []
-    errbacks = []
-
-    def callback(self, callback):
-        self.callbacks.append(callback)
-
-    def errback(self, errback):
-        self.errbacks.append(errback)
-
-    def fire(self, resource):
-        r = resource
-        for callback in self.callbacks:
-            try:
-                r = callback(r)
-                if r is None:
-                    return
-            except Exception as e:
-                for errback in self.errbacks:
-                    errback(e)
-                return
-
-
-class ZipDownloadUnpack(object):
-
-    def __init__(self, basedir):
-        self.basedir = basedir
-        self.logger = logging.getLogger(APPNAME)
-        self.cachedir = tempfile.mkdtemp()
-        atexit.register(shutil.rmtree, self.cachedir)
-        self.logger.debug('Created cache directory: %s', self.cachedir)
-
-    def process(self, resource):
-        self.logger.info('Start processing: %s', resource['name'])
-        evt = Event()
-        evt.callback(self.download)
-        evt.callback(self.unpack)
-        evt.callback(self.convert)
-        evt.callback(self.write)
-        evt.errback(self.logger.error)
-        evt.fire(resource)
-        self.logger.info('End processing: %s', resource['name'])
-
-    def download(self, resource):
-        path = os.path.join(self.cachedir, resource['name'] + '.zip')
-        if os.path.exists(path):
-            self.logger.debug('"%s" is already downloaded.', resource['name'])
+async def pulldata(resource, url, /, basedir=None, cachedir=None, logger=None):
+    if basedir is None:
+        basedir = Path.cwd()
+    if cachedir is None:
+        cachedir = Path.cwd()
+    if logger is None:
+        logger = logging.getLogger('pulldata')
+    local_path = basedir / resource['path']
+    local_archive = cachedir / f'{resource["name"]}.zip'
+    if local_path.exists():
+        logger.info(f'file already exists: {resource["name"]} at {resource["path"]}')
+        return
+    if local_archive.exists():
+        logger.info(f'archive file is already downloaded: {local_archive.name}')
+    else:
+        logger.info(f'downloading archive file from: {url}')
+        urlretrieve(url, local_archive)
+        stats = local_archive.stat()
+        logger.info(f'downloaded archive file as: {local_archive.name} ({stats.st_size:,} bytes)')
+    if not local_path.parent.exists():
+        local_path.parent.mkdir()
+        logger.info(f'created data directory: {local_path.parent}')
+    output = local_path.open('w', encoding=ENCODING)
+    writer = csv.writer(output, quoting=csv.QUOTE_NONNUMERIC)
+    fields = resource['schema']['fields']
+    header = [f['name'] for f in fields]
+    writer.writerow(header)
+    normalize = partial(unicodedata.normalize, NORMALIZATION_FORM)
+    counter = 0
+    with zipfile.ZipFile(local_archive) as z:
+        csv_files = [f for f in z.namelist() if f.lower().endswith('.csv')]
+        if len(csv_files) > 1:
+            logger.error(f'zip archive contains multiple csv files: {", ".join(csv_files)}')
             return
-        self.logger.info('Start downloading: %s -> %s', resource['url'], path)
-        urlretrieve(resource['url'], path)
-        self.logger.info('Successfully downloaded "{}" {:,} bytes.'.format(
-            os.path.basename(path), os.path.getsize(path)))
-        return resource
+        with z.open(csv_files[0]) as fp:
+            reader = csv.reader(map(lambda s: normalize(s.decode(ORIGINAL_ENCODING)), fp))
+            for row in reader:
+                writer.writerow(row)
+                counter += 1
+    output.close()
+    stats = local_path.stat()
+    logger.info(f'wrote {counter:,} records into {local_path.name} ({stats.st_size:,} bytes)')
 
-    def unpack(self, resource):
-        path = os.path.join(self.cachedir, resource['name'] + '.zip')
-        self.logger.debug('Unpacking ZIP file: %s', path)
-        with zipfile.ZipFile(path) as z:
-            for f in z.namelist():
-                if f.lower().endswith('.csv'):
-                    z.extract(f, self.cachedir)
-                    resource['_local'] = os.path.join(self.cachedir, f)
-                    return resource
 
-    def convert(self, resource):
-        # Convert half-width Katakana to full-width
-        path = resource['_local']
-        self.logger.debug('Converting CSV file: %s', path)
-        data = []
-        normalize = partial(unicodedata.normalize, NORMALIZATION_FORM)
-        with codecs.open(path, 'r', ORIGINAL_ENCODING) as fp:
-            for line in fp:
-                data.append(normalize(line.rstrip('\r\n')))
-        resource['data'] = data
-        return resource
-
-    def write(self, resource):
-        path = os.path.join(self.basedir, resource['path'])
-        encoding = resource.get('encoding', ENCODING)
-        fields = resource['schema']['fields']
-        data = resource['data']
-        with codecs.open(path, 'w', encoding) as w:
-            header = tuple(map(lambda f: f['name'], fields))
-            w.write(','.join(header))
-            w.write('\n')
-            w.write('\n'.join(data))
-            w.write('\n')
-        self.logger.info('Wrote "{}" {:,} bytes of {:,} lines.'.format(
-            resource['path'], os.path.getsize(path), len(data)))
+def sha256hex(path):
+    """Calculates SHA-256 and returns its hex representation.
+    """
+    m = hashlib.sha256()
+    with open(path, 'rb') as f:
+        for chunk in iter(lambda: f.read(2048 * m.block_size), b''):
+            m.update(chunk)
+    return m.hexdigest()
 
 
 def setup_logger(verbosity=logging.INFO):
+    logging.config.dictConfig(LOGGING_CONFIG)
     logger = logging.getLogger(APPNAME)
-    logger.setLevel(logging.DEBUG)
-    handler = logging.StreamHandler()
-    handler.setLevel(verbosity)
-    fmt = LOG_FORMAT_DEBUG if verbosity == logging.DEBUG else LOG_FORMAT
-    handler.setFormatter(logging.Formatter(fmt, datefmt=LOG_DATEFMT))
-    logger.addHandler(handler)
     return logger
 
 
-def main():
+async def main():
     logger = setup_logger()
-    if not os.path.exists(DATA_DIR):
-        os.makedirs(DATA_DIR)
-    with open(DATA_PACKAGE) as fp:
+    if not DATA_PACKAGE.exists():
+        logger.error(f'datapackage file is not found: {DATA_PACKAGE.resolve()}')
+        return
+    with DATA_PACKAGE.open() as fp:
         package = json.load(fp)
     resources = package['resources']
-    processor = ZipDownloadUnpack(BASEDIR)
-    for r in RESOURCES:
-        s = tuple(filter(lambda t: t['name'] == r['name'], resources))
-        if s:
-            a = copy.copy(s[0])
-            a['url'] = r['url']
-            processor.process(a)
-        else:
-            logger.error('"%s" is not found on datapackage.', r['name'])
-
+    logger.info(f'datapackage "{package["name"]}" has {len(resources)} resources')
+    cachedir = Path(tempfile.mkdtemp())
+    logger.debug(f'created a cache directory: {cachedir}')
+    basedir = DATA_PACKAGE.parent
+    pull = partial(pulldata, basedir=basedir, cachedir=cachedir, logger=logger)
+    tasks = []
+    for resource in resources:
+        url = REMOTE_URLS[resource['name']]
+        task = asyncio.create_task(pull(resource, url))
+        tasks.append(task)
+    await asyncio.gather(*tasks)
+    shutil.rmtree(cachedir)
+    logger.debug(f'cleaned up a cache directory: {cachedir}')
+    logger.info('calculating hash values over resource data files.')
+    digest = {}
+    for resource in resources:
+        local_path = basedir / resource['path']
+        hashvalue = sha256hex(local_path)
+        stats = local_path.stat()
+        digest[resource["name"]] = {
+            "bytes": stats.st_size,
+            "hash": f"sha256:{hashvalue}",
+        }
+        logger.info(f' - {resource["name"]}: sha256:{hashvalue} on {resource["path"]}')
+    digest_file = basedir / 'datapackage-digest.json'
+    if digest_file.exists():
+        logger.warning(f'overwrite a digest file: {digest_file}')
+    now = datetime.datetime.now()
+    with digest_file.open('w') as fp:
+        json.dump({
+            "downloaded_at": f"{now:%Y-%m-%d %H:%M:%S}",
+            "resources": digest,
+        }, fp, indent=2)
+    logger.info(f'wrote a digest file: {digest_file}')
 
 if __name__ == '__main__':
-    main()
-
-# vim: set et ts=4 sw=4 cindent fileencoding=utf-8 :
+    asyncio.run(main())
