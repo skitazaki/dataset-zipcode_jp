@@ -1,26 +1,9 @@
 language: python
 python:
-  - "3.6"
+  - "3.8"
 
-services:
-  - postgresql
-
-addons:
-  postgresql: "9.6"
-
-# command to install dependencies
 install:
-  - "pip install pipenv"
-  - "pipenv lock"
-  - "pipenv install --dev"
+  - "python3 -m pip install flake8"
 
-before_script:
-  - psql -c 'create database travis_ci_test;' -U postgres
-
-# command to run the dependencies
 script:
-  - "pipenv run flake8 scripts/yaml2json.py"
-  - "pipenv run flake8 scripts/pgddl.py"
-  - "pipenv run flake8 scripts/gen-prefcity.py"
-  - "cp datapackage.json t.json && pipenv run scripts/yaml2json.py && diff t.json datapackage.json"
-  - "pipenv run scripts/pgddl.py | psql -U postgres -d travis_ci_test"
+  - "flake8 scripts/pulldata.py"

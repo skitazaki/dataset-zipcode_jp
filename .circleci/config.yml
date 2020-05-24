@@ -17,3 +17,6 @@ jobs:
       - store_artifacts:
           path: datapackage.zip
           destination: datapackage.zip
+      - store_artifacts:
+          path: datapackage-digest.json
+          destination: datapackage-digest.json
