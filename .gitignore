@@ -1,8 +1,7 @@
 data/
 .env
-Pipfile.lock
-datapackage.sql
 datapackage.zip
+datapackage-digest.json
 
 # Editor config
 .vscode/settings.json
