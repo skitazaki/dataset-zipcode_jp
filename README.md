@@ -1,21 +1,8 @@
 # Japanese Zipcode
 
-There are four files from Japan Postal.
-Three types of *ken_all* files for nation wide postal codes and
-a facility file for specific companies, organizations, or locations.
-
-Three types of different writing systems for Japanese yomi-gana are:
-
-* Oogaki
-* Kogaki
-* Roman
-
-You can download all files using `scripts/pulldata.py`.
-Each downloaded file is converted its encoding from 'cp932' to 'utf8',
-normalized from half-width Katakana to full-width,
-and saved under `data` directory.
-
-Additional Jupyter notebooks are under `notebook` directory.
+There are four files of zip code in Japan from the Japan Post.
+Three of them are named *ken_all* for nation wide zip codes with different writing systems of Oogaki, Kogaki, and Roman.
+Another file is for specific companies, organizations, or locations.
 
 -----
 
@@ -38,38 +25,22 @@ Additional Jupyter notebooks are under `notebook` directory.
 
 日本郵便株式会社: http://www.post.japanpost.jp
 
-## Development
+## How to use
 
-Setup Python development environments using `pipenv`.
+You can run `pulldata.py` in order to download data files under `data/` directory from the Japan Post site.
+This script converts encodings from "*cp932*" to "*utf8*" and normalizes characters from half-width Katakana to full-width.
 
 ```bash
-$ pip3 install --user pipenv
-$ pipenv install --ignore-pipfile
+$ python3 scripts/pulldata.py
 ```
 
-For VisualStudio Code user, configure user settings `"python.venvPath"` to find *virtualenv* environments.
-You can get the directory where `pipenv` installs *virtualenv* environments to use *--venv* option.
+To make a zip package, use *zipfile* module in Python.
 
 ```bash
-$ dirname `pipenv --venv`
+$ python3 -m zipfile -c datapackage.zip datapackage.json data
 ```
 
 `datapackage.yml` is a source file for manual editing, and `datapackage.json` is converted from YAML format.
-
-## How to use
-
-To download data files, run `pulldata.py` in *scripts/*.
-This script is written by Python 2.x.
-
-```bash
-$ python scripts/pulldata.py
-```
-
-To make zip package, use *zipfile* module in Python.
-
-```bash
-$ pipenv run python -m zipfile -c datapackage.zip datapackage.json data
-```
 
 ## LICENSE
 
