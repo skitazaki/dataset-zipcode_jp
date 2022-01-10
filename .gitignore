@@ -1,7 +1,4 @@
-data/
-.env
-datapackage.zip
-datapackage-digest.json
+serverless/.env
 serverless/packaged-template.yaml
 serverless/src/datapackage.json
 
