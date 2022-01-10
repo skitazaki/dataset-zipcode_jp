@@ -16,39 +16,24 @@ Another file is for specific companies, organizations, or locations.
 
 その他に、大口事業所個別番号があります。
 
-それぞれのデータは `scripts/pulldata.py` を使ってダウンロードできます。
-ダウンロードしたデータは文字エンコーディングが cp932 から utf8 に変換され、
-半角カタカナは全角カタカナに変換されます。
-それぞれのCSVファイルは `data` ディレクトリに配置されます。
-
-データ確認や変換に関する追加作業は `notebook` ディレクトリで管理します。
-
-日本郵便株式会社: http://www.post.japanpost.jp
+データ項目の意味は[日本郵便のWebサイト](http://www.post.japanpost.jp)で確認してください。
 
 ## How to use
 
-You can run `pulldata.py` in order to download data files under `data/` directory from the Japan Post site.
-This script converts encodings from "*cp932*" to "*utf8*" and normalizes characters from half-width Katakana to full-width.
+You need to deploy a serverless app on AWS in order to create a datapackage, since this repository provides only a package definition.
+The serverless app downloads four csv files from the Japan Post website and creates a datapackage on Amazon S3.
+Please take a look at the files under *serverless/* directory and give it a try with your AWS settings described in `Makefile`.
 
-```bash
-$ python3 scripts/pulldata.py
-```
+## How to extend
 
-To make a zip package, use *zipfile* module in Python.
-
-```bash
-$ python3 -m zipfile -c datapackage.zip datapackage.json data
-```
-
-`datapackage.yml` is a source file for manual editing, and `datapackage.json` is converted from YAML format.
+`datapackage.yml` is a source file for manual editing, and it would be converted into `datapackage.json` for packaging.
 
 ## LICENSE
 
-[郵便番号データの説明 - 日本郵便](http://www.post.japanpost.jp/zipcode/dl/readme.html)
+The Japan Post does not claim copyright for the original data files of zipcode.
+
+ref - [郵便番号データの説明 - 日本郵便](http://www.post.japanpost.jp/zipcode/dl/readme.html)
 
     郵便番号データに限っては日本郵便株式会社は著作権を主張しません。自由に配布していただいて結構です。
 
-Others:
-
-- MIT license for scripts.
-- [Open Data Commons Public Domain Dedication and License (PDDL)](https://opendatacommons.org/licenses/pddl/) for package definition.
+MIT License is applied to scripts in this repository, and [Open Data Commons Public Domain Dedication and License (PDDL)](https://opendatacommons.org/licenses/pddl/) is applied to the package definition.
