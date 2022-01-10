@@ -1,0 +1,133 @@
+---
+
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Data source update service for Japanese zipcode from JapanPost.
+Parameters:
+  StorageBucket:
+    Description: Bucket name where downloaded files are stored.
+    Type: String
+  StoragePrefix:
+    Description: Prefix string in bucket.
+    Type: String
+    Default: "datasets/zipcode-jp/"
+Globals:
+  Function:
+    Runtime: python3.9
+    MemorySize: 128
+    Timeout: 120
+Resources:
+  FnPackageCreator:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: Create a data package of raw data files at JapanPost
+      CodeUri: src/
+      Handler: main.create_data_package
+      Environment:
+        Variables:
+          STORAGE_BUCKET: !Ref StorageBucket
+          STORAGE_PREFIX: !Ref StoragePrefix
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - "s3:ListBucket"
+              Resource: !Sub "arn:aws:s3:::${StorageBucket}"
+              Condition:
+                StringLike:
+                  s3:prefix:
+                    - !Sub "${StoragePrefix}*"
+            - Effect: Allow
+              Action:
+                - "s3:PutObject"
+              Resource: !Sub "arn:aws:s3:::${StorageBucket}/${StoragePrefix}*"
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - "cloudwatch:PutMetricData"
+              Resource: "*"
+      Events:
+        Weekly:
+          Type: Schedule
+          Properties:
+            Schedule: "rate(7 days)"
+  FnMasterDataBuilder:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: Merge data files of Katakana and Roman
+      CodeUri: src/
+      Handler: main.build_master_data
+      Environment:
+        Variables:
+          STORAGE_BUCKET: !Ref StorageBucket
+          STORAGE_PREFIX: !Ref StoragePrefix
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - "s3:ListBucket"
+              Resource: !Sub "arn:aws:s3:::${StorageBucket}"
+              Condition:
+                StringLike:
+                  s3:prefix:
+                    - !Sub "${StoragePrefix}*"
+            - Effect: Allow
+              Action:
+                - "s3:GetObject"
+                - "s3:PutObject"
+              Resource: !Sub "arn:aws:s3:::${StorageBucket}/${StoragePrefix}*"
+  StatesExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - !Sub states.${AWS::Region}.amazonaws.com
+            Action: "sts:AssumeRole"
+      Path: "/"
+      Policies:
+        - PolicyName: StatesExecutionPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "lambda:InvokeFunction"
+                Resource: "*"
+  StateMachine:
+    Type: AWS::StepFunctions::StateMachine
+    Properties:
+      DefinitionString: !Sub |
+        {
+          "Comment": "Update data source of zipcode in Japan",
+          "StartAt": "PackageCreation",
+          "States": {
+            "PackageCreation": {
+              "Type": "Task",
+              "Resource": "${FnPackageCreator.Arn}",
+              "Next": "MasterDataManagement"
+            },
+            "MasterDataManagement": {
+              "Type": "Task",
+              "Resource": "${FnMasterDataBuilder.Arn}",
+              "End": true
+            }
+          }
+        }
+      RoleArn: !GetAtt StatesExecutionRole.Arn
+Outputs:
+  FnPackageCreator:
+    Description: Function name to create a data package of raw data files at JapanPost.
+    Value: !Ref FnPackageCreator
+  FnMasterDataBuilder:
+    Description: Function name to merge data files of Katakana and Roman.
+    Value: !Ref FnMasterDataBuilder
+  StateMachine:
+    Description: State machine to orchestrate Lambda functions.
+    Value: !Ref StateMachine

@@ -1,0 +1,37 @@
+name: Serverless App
+
+on:
+  push:
+    branches:
+      - $default-branch
+  pull_request:
+    paths:
+      - 'datapackage.json'
+      - 'serverless/**'
+
+env:
+  AWS_REGION: ap-northeast-1
+  AWS_S3_PACKAGE_BUCKET: skitazaki
+  AWS_S3_PACKAGE_PREFIX: external/github/dataset-zipcode_jp/
+
+jobs:
+  build:
+    name: Create a package of AWS Serverless Application Model
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Make a serverless package and copy it to the package bucket on S3
+      run: |
+        echo AWS_S3_PACKAGE_BUCKET=${{ env.AWS_S3_PACKAGE_BUCKET }} >> serverless/.env
+        echo AWS_S3_PACKAGE_PREFIX=${{ env.AWS_S3_PACKAGE_PREFIX }} >> serverless/.env
+        make -C serverless dist
