@@ -2,6 +2,8 @@ data/
 .env
 datapackage.zip
 datapackage-digest.json
+serverless/packaged-template.yaml
+serverless/src/datapackage.json
 
 # Editor config
 .vscode/settings.json
