@@ -1,4 +1,4 @@
-name: Create a package of AWS Serverless Application Model
+name: Serverless App
 
 on:
   push:
@@ -15,8 +15,8 @@ env:
   AWS_S3_PACKAGE_PREFIX: external/github/dataset-zipcode_jp/
 
 jobs:
-  deploy:
-    name: Start CodePipeline
+  build:
+    name: Create a package of AWS Serverless Application Model
     runs-on: ubuntu-latest
 
     steps:
