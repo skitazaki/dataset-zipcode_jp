@@ -31,7 +31,7 @@ src/datapackage.json:
 
 $(PACKAGED_TEMPLATE): src/datapackage.json
 	aws cloudformation package --template-file template.yaml \
-		--s3-bucket $(AWS_S3_PACKAGE_BUCKET) --s3-prefix $(AWS_S3_PACKAGE_PREFIX) \
+		--s3-bucket $(AWS_S3_PACKAGE_BUCKET) --s3-prefix $(AWS_S3_PACKAGE_PREFIX)assets \
 		--output-template-file $(PACKAGED_TEMPLATE)
 
 .PHONY: deploy
